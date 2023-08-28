@@ -1,6 +1,5 @@
 name: Deploy Infrastructure
 on:
-  push: [main]
   workflow_dispatch:
     inputs:
       name:
