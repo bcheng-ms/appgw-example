@@ -7,7 +7,7 @@ on:
         default: "myapp"
       location:
         description: "Location of the resource group"
-        default: "eus2"
+        default: "eastus2"
 
 jobs:
   deploy-infrastructure:
