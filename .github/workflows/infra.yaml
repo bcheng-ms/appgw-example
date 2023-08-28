@@ -1,0 +1,51 @@
+name: Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Name of the app"
+        default: "myapp"
+      location:
+        description: "Location of the resource group"
+        default: "eus2"
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - uses: actions/checkout@main
+
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create resource group
+        uses: Azure/CLI@v1
+        with:
+          inlineScript: |
+            #!/bin/bash
+            az group create --name rg-${{ github.event.inputs.location }}-${{ github.event.inputs.name }}-dev --location ${{ github.event.inputs.location }}
+            echo "Azure resource group created"
+
+        # Deploy Bicep file
+      - name: Deploy app service 1
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: rg-${{ github.event.inputs.location }}-${{ github.event.inputs.name }}-dev
+          template: ./biceps/appservice.bicep
+          parameters: "webAppName=app1"
+          failOnStdErr: false
+
+        # Deploy Bicep file
+      - name: Deploy app service 2
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: rg-${{ github.event.inputs.location }}-${{ github.event.inputs.name }}-dev
+          template: ./biceps/appservice.bicep
+          parameters: "webAppName=app2"
+          failOnStdErr: false
