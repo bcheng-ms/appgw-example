@@ -22,16 +22,16 @@ jobs:
           npm run build
       - name: Zip App
         run: |
-          cd build
+          cd app1/build
           zip -r app1.zip .
       - name: Build App 2
         run: |
-          cd ../../app2
+          cd app2
           npm install
           npm run build
       - name: Zip App
         run: |
-          cd build
+          cd app2/build
           zip -r app2.zip .
       - name: Upload artifact for app 1
         uses: actions/upload-artifact@v3
