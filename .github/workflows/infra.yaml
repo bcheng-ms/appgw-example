@@ -8,10 +8,20 @@ on:
       location:
         description: "Location of the resource group"
         default: "eastus2"
+      selectedEnvironment:
+        type: choice
+        required: true
+        default: external
+        description: Environment
+        options:
+          - external
+          - dev
+          - production
 
 jobs:
   deploy-infrastructure:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.selectedEnvironment }}
     steps:
       # Checkout code
       - uses: actions/checkout@main
